@@ -827,4 +827,6 @@ go
 
 
 
-
+use WideWorldImporters
+go
+select * from sales.invoices

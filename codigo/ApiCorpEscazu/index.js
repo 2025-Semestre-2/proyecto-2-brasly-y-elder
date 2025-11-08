@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 // 🔹 Configuración de la conexión a SQL Server
 const config = {
     user: 'sa',
-    password: '#linux2025',
+    password: 'Elp703080520*',
     server: 'localhost',
     database: 'WideWorldImporters',
     options: {
