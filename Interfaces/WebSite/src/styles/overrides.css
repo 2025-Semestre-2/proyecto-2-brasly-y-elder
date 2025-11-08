@@ -1,0 +1,10 @@
+.pro-sidebar > .pro-sidebar-inner {
+  background-color: var(--sider) !important; 
+  background-image: none !important; 
+
+}
+
+.pro-sidebar .pro-menu-item, 
+.pro-sidebar .pro-sub-menu > .pro-inner-item {
+  color: white !important;
+}

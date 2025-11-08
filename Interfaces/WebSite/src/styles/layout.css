@@ -1,0 +1,136 @@
+.custom-sidebar {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  bottom: 30px; 
+  z-index: 2000;
+  transition: all 0.3s ease;
+  border-radius: 30px; 
+  overflow: hidden;
+}
+.custom-sidebar.collapsed {
+  width: 80px; 
+}
+.custom-sidebar.expanded {
+  width: 200px; 
+}
+
+.overlay {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.pro-sidebar {
+  margin-bottom: 20px; 
+  border-radius: 0 20px 20px 0;
+  overflow: hidden;
+  min-width: 200px;
+  
+}
+.content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 80px; 
+  transition: margin-left 0.3s ease;
+  height: 93vh; 
+  background-color: var(--background);
+}
+.body-layout.collapsed .content {
+  margin-left: 80px; 
+}
+.right-section.expanded .content{
+  margin-left: 200px; 
+}
+
+.Sup-contenedor {
+  width: 100%;
+  height: 96vh;
+  padding: 20px;
+  box-sizing: border-box;
+   background-color: var(--light-bg);
+  border-radius: 8px; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+  overflow-x: hidden;
+  overflow-y: auto; 
+}
+
+
+.FormNuevoProducto{
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.titulo-pagina{
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.subtitulo-pagina{
+  color: #6b7280;
+  margin-bottom: 18px;
+}
+
+.grid-pagina{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.col{ display: flex; flex-direction: column; gap: 16px; }
+
+
+.card{
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.card-title{ font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+.card-desc{ color:#6b7280; font-size: 14px; margin-bottom: 12px; }
+
+
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font-weight:600; font-size: 14px; }
+.field input,
+.field select,
+.field textarea{
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 10px;
+  outline: none;
+  background: #fff;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{ border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+
+.grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+.checkline{ display:flex; align-items:center; gap:10px; margin-top: 6px; }
+.checkline input{ width:16px; height:16px; }
+
+.acciones{
+  display:flex; gap:12px;
+  padding: 18px 0 6px;
+  position: sticky; bottom: 0; 
+}
+.btn-primario{
+  background:#3b82f6; color:#fff; border:none; border-radius:10px; padding:12px 18px; cursor:pointer; font-weight:600;
+}
+.btn-primario:disabled{ opacity:.6; cursor:not-allowed; }
+.btn-secundario{
+  background:#fff; color:#374151; border:1px solid #d1d5db; border-radius:10px; padding:12px 18px; cursor:pointer; font-weight:600;
+}
+
+@media (max-width: 1024px){
+  .grid-pagina{ grid-template-columns: 1fr; }
+  .grid-3{ grid-template-columns: 1fr; }
+  .grid-2{ grid-template-columns: 1fr; }
+}
+
