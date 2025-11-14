@@ -11,6 +11,7 @@ import {
   FaCrown,
   FaMedal,
   FaChartLine,
+  FaHome
 } from "react-icons/fa";
 import { Link } from "react-router-dom"; 
 import "react-pro-sidebar/dist/css/styles.css";
@@ -37,6 +38,9 @@ export default function Sidebar({ onCollapse }) {
         <Menu iconShape="square">
           <MenuItem icon={<FaBars />} onClick={handleToggle}>
             {collapsed ? "Abrir" : "Cerrar"}
+          </MenuItem>
+          <MenuItem icon={<FaHome />}>
+            <Link to="/">Home</Link>
           </MenuItem>
           <MenuItem icon={<FaUsers />}>
             <Link to="/ModuloCliente">Cliente</Link>

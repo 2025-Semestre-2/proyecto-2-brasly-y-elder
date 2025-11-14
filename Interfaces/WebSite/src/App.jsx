@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Sidebar from "./components/Sidebar";
 import MainContent from "./components/MainContent";
 import ModuloCliente from "./components/ModuloCliente";
@@ -18,6 +19,8 @@ import TopProveedores from "./components/TopProveedores";
 import InsertarInventario from "./components/InsertarInventario";
 import ModificarInventario from "./components/ModificarInventario";
 
+import Login from "./components/Login";
+
 import "./styles/base.css";
 import "./styles/layout.css";
 import "./styles/overrides.css";
@@ -25,6 +28,10 @@ import "./styles/components.css";
 
 export default function App() {
   const [collapsed, setCollapsed] = useState(true);
+  const [isAuth, setIsAuth] = useState(false); // 👈 CONTROL LOGIN
+  if (!isAuth) {
+    return <Login onLogin={() => setIsAuth(true)} />;
+  }
 
   return (
     <Router>
