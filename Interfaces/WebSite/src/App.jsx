@@ -19,7 +19,7 @@ import TopProveedores from "./components/TopProveedores";
 import InsertarInventario from "./components/InsertarInventario";
 import ModificarInventario from "./components/ModificarInventario";
 
-import Login from "./components/Login";
+import Login from "./components/login";
 
 import "./styles/base.css";
 import "./styles/layout.css";
@@ -28,7 +28,7 @@ import "./styles/components.css";
 
 export default function App() {
   const [collapsed, setCollapsed] = useState(true);
-  const [isAuth, setIsAuth] = useState(false); // 👈 CONTROL LOGIN
+  const [isAuth, setIsAuth] = useState(false); 
   if (!isAuth) {
     return <Login onLogin={() => setIsAuth(true)} />;
   }

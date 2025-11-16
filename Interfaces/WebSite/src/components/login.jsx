@@ -6,11 +6,7 @@ export default function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Aquí podrías validar o llamar a tu API
     console.log("Email:", email, "Password:", pass);
-
-    // 👉 Cuando se loguea correctamente se llama onLogin()
     onLogin();
   };
 

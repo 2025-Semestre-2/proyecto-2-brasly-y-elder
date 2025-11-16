@@ -48,9 +48,8 @@
 
 
 .Tablas-tabla {
-  width: 90vw; 
+  width: 80vw; 
   min-width: 300px;
-
   border-collapse: collapse;
   border-radius: 12px;
   overflow: hidden;
