@@ -20,6 +20,7 @@ export default function ModuloInventario() {
   const [productos, setproductos] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [grupos, setGrupo] = useState([]);
+  const [sucursales, setSucursales] = useState(""); 
 
   // Paginación dinámica
   const [paginaActual, setPaginaActual] = useState(1);
@@ -34,7 +35,6 @@ export default function ModuloInventario() {
     try { return JSON.parse(text); } catch { return { error: text }; }
   };
 
-  // Ajustar filas por página según el alto disponible
   const ajustarFilas = () => {
     const alturaDisponible = window.innerHeight * 0.50;
     const altoFila = 40;
@@ -49,10 +49,13 @@ export default function ModuloInventario() {
 
   const obtenerInventario = async () => {
     setCargando(true);
+
     try {
+      setSucursales(filtros.sucursal);
       const params = new URLSearchParams({
         nombre: filtros.nombre,
         Grupo: filtros.Grupo,
+        sucursal: filtros.sucursal,  
       });
 
       const respuesta = await fetch(`http://localhost:3000/inventario?${params}`);
@@ -69,6 +72,7 @@ export default function ModuloInventario() {
         `Se cargaron ${Array.isArray(data) ? data.length : 0} productos`,
         "Inventario actualizado"
       );
+
     } catch (error) {
       console.error("Error al obtener inventario:", error);
       await Swal.fire({
@@ -109,6 +113,7 @@ export default function ModuloInventario() {
       toastr.success("Producto eliminado correctamente", "Éxito");
       await obtenerInventario();
       return data;
+
     } catch (err) {
       console.error("❌ Error al eliminar:", err);
       await Swal.fire({
@@ -120,11 +125,14 @@ export default function ModuloInventario() {
       throw err;
     }
   };
+    useEffect(() => {
+    obtenerInventario();
+  }, [filtros]);
 
   const restaurarFiltros = () => {
-    setFiltros({ nombre: "", Grupo: "" });
+    setFiltros({ nombre: "", Grupo: "", sucursal: "" });
+    setSucursales(""); 
     toastr.info("Filtros restaurados");
-    obtenerInventario();
   };
 
   const Agregar = () => {
@@ -149,6 +157,7 @@ export default function ModuloInventario() {
       }
 
       setGrupo(Array.isArray(data) ? data : []);
+
     } catch (error) {
       console.error("Error al obtener categorías:", error);
       toastr.error("No se pudieron cargar las categorías", "Error");
@@ -162,7 +171,6 @@ export default function ModuloInventario() {
       await Promise.all([obtenerInventario(), obtenerGrupos()]);
     })();
     return () => window.removeEventListener("resize", ajustarFilas);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const totalPaginas = Math.max(Math.ceil(productos.length / filasPorPagina), 1);
@@ -177,6 +185,16 @@ export default function ModuloInventario() {
 
         {/* Filtros */}
         <div className="Tablas-filtros">
+          <select
+            name="sucursal"
+            value={filtros.sucursal}
+            onChange={manejarCambio}
+          >
+            <option value="">Todas las sucursales</option>
+            <option value="Limón">Limón</option>
+            <option value="San José">San José</option>
+          </select>
+
           <input
             type="text"
             name="nombre"
@@ -184,6 +202,7 @@ export default function ModuloInventario() {
             value={filtros.nombre}
             onChange={manejarCambio}
           />
+
           <select name="Grupo" value={filtros.Grupo} onChange={manejarCambio}>
             <option value="">Todas las categorías</option>
             {grupos.map((cat, index) => (
@@ -192,6 +211,7 @@ export default function ModuloInventario() {
               </option>
             ))}
           </select>
+
           <div className="flex gap-2">
             <button onClick={obtenerInventario}>Buscar</button>
             <button onClick={restaurarFiltros}>Restaurar</button>
@@ -209,11 +229,13 @@ export default function ModuloInventario() {
                 <tr>
                   <th>ID</th>
                   <th>Nombre</th>
+                  {sucursales !== "" && <th>Sucursal</th>}
                   <th>Grupos</th>
                   <th>Cantidad</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
+
               <tbody>
                 {productosActuales.length > 0 ? (
                   productosActuales.map((c) => (
@@ -224,8 +246,10 @@ export default function ModuloInventario() {
                     >
                       <td>{c.ID}</td>
                       <td>{c.NombreProducto}</td>
+                      {sucursales !== "" && <td>{sucursales}</td>}                      
                       <td>{c.Grupos}</td>
                       <td>{c.Cantidad}</td>
+
                       <td className="acciones" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => modificar(c.ID)}
@@ -246,7 +270,7 @@ export default function ModuloInventario() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center py-4 text-gray-500">
+                    <td colSpan="6" className="text-center py-4 text-gray-500">
                       No se encontraron resultados.
                     </td>
                   </tr>

@@ -30,9 +30,15 @@ export default function ModuloProveedor() {
     const { name, value } = e.target;
     setFiltros({ ...filtros, [name]: value });
   };
+
+  useEffect(() => {
+    obtenerProveedor();
+  }, [filtros]);
+
   const restaurarFiltros = () => {
     setFiltros({ nombre: "", categoria: "", entrega: "" });
-    obtenerClientes();
+    setSucursales(""); 
+    toastr.info("Filtros restaurados");
   };
   const obtenerProveedor = async () => {
     setCargando(true);

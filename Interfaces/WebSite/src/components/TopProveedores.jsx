@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
+import toastr from "toastr";
 
 export default function TopProveedores() {
-  const [rangos, setRangos] = useState({ año_inicio: "", año_fin: "" });
+
+  const [rangos, setRangos] = useState({
+    año_inicio: "",
+    año_fin: "",
+    sucursal: ""     
+  });
+
+  const [sucursales, setSucursales] = useState(""); 
   const [datos, setDatos] = useState([]);
   const [cargando, setCargando] = useState(false);
 
@@ -21,11 +29,16 @@ export default function TopProveedores() {
   const obtenerDatos = async () => {
     setCargando(true);
     try {
+      setSucursales(rangos.sucursal);
       const params = new URLSearchParams(rangos);
-      const respuesta = await fetch(`http://localhost:3000/Estadisticas/top_proveedores?${params}`);
+      const respuesta = await fetch(
+        `http://localhost:3000/Estadisticas/top_proveedores?${params}`
+      );
+
       const data = await respuesta.json();
       setDatos(data);
       setPaginaActual(1);
+
     } catch (error) {
       console.error("Error al obtener top proveedores:", error);
     } finally {
@@ -33,15 +46,27 @@ export default function TopProveedores() {
     }
   };
 
+  // 👉 SOLO carga inicial, no recarga cuando cambias select
   useEffect(() => {
     ajustarFilas();
     window.addEventListener("resize", ajustarFilas);
-    obtenerDatos();
+    obtenerDatos(); // carga inicial
     return () => window.removeEventListener("resize", ajustarFilas);
   }, []);
 
+  // paginación
   const totalPaginas = Math.max(Math.ceil(datos.length / filasPorPagina), 1);
-  const filasActuales = datos.slice((paginaActual - 1) * filasPorPagina, paginaActual * filasPorPagina);
+  const filasActuales = datos.slice(
+    (paginaActual - 1) * filasPorPagina,
+    paginaActual * filasPorPagina
+  );
+
+  const restaurarFiltros = () => {
+    setRangos({ año_inicio: "", año_fin: "", sucursal: "" });
+    setSucursales("");
+    toastr.info("Filtros restaurados");
+    obtenerDatos();
+  };
 
   return (
     <main className="content">
@@ -50,11 +75,36 @@ export default function TopProveedores() {
 
         {/* Filtros */}
         <div className="Tablas-filtros">
-          <input type="number" name="año_inicio" placeholder="Año inicio" value={rangos.año_inicio} onChange={manejarCambio} />
-          <input type="number" name="año_fin" placeholder="Año fin" value={rangos.año_fin} onChange={manejarCambio} />
+
+         <select
+            name="sucursal"
+            value={rangos.sucursal}
+            onChange={manejarCambio}
+          >
+            <option value="">Todas las sucursales</option>
+            <option value="Limón">Limón</option>
+            <option value="San José">San José</option>
+          </select>
+
+          <input
+            type="number"
+            name="año_inicio"
+            placeholder="Año inicio"
+            value={rangos.año_inicio}
+            onChange={manejarCambio}
+          />
+
+          <input
+            type="number"
+            name="año_fin"
+            placeholder="Año fin"
+            value={rangos.año_fin}
+            onChange={manejarCambio}
+          />
+
           <div className="flex gap-2">
             <button onClick={obtenerDatos}>Buscar</button>
-            <button onClick={() => { setRangos({ año_inicio: "", año_fin: "" }); obtenerDatos(); }}>Restaurar</button>
+            <button onClick={restaurarFiltros}>Restaurar</button>
           </div>
         </div>
 
@@ -68,18 +118,21 @@ export default function TopProveedores() {
                 <tr>
                   <th>Año</th>
                   <th>ID Proveedor</th>
+                   {sucursales !== "" && <th>Sucursal</th>}
                   <th>Proveedor</th>
                   <th>Órdenes</th>
                   <th>Monto Total</th>
                   <th>Posición</th>
                 </tr>
               </thead>
+
               <tbody>
                 {filasActuales.length > 0 ? (
                   filasActuales.map((fila, i) => (
                     <tr key={i}>
                       <td>{fila.año}</td>
                       <td>{fila.id_proveedor}</td>
+                      {sucursales !== "" && <td>{sucursales}</td>}
                       <td>{fila.proveedor}</td>
                       <td>{fila.cantidad_ordenes}</td>
                       <td>{Number(fila.monto_total ?? 0).toLocaleString()}</td>
@@ -94,9 +147,9 @@ export default function TopProveedores() {
 
             {/* Paginación */}
             <div className="Tablas-paginacion">
-              <button onClick={() => setPaginaActual(p => Math.max(p - 1, 1))} disabled={paginaActual === 1}>Anterior</button>
+              <button onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))} disabled={paginaActual === 1}>Anterior</button>
               <span>{paginaActual} / {totalPaginas}</span>
-              <button onClick={() => setPaginaActual(p => Math.min(p + 1, totalPaginas))} disabled={paginaActual === totalPaginas}>Siguiente</button>
+              <button onClick={() => setPaginaActual((p) => Math.min(p + 1, totalPaginas))} disabled={paginaActual === totalPaginas}>Siguiente</button>
             </div>
           </>
         )}

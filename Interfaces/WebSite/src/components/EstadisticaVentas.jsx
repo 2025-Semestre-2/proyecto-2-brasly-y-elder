@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 export default function EstadisticasVentas() {
-  const [filtros, setFiltros] = useState({ nombre_cliente: "", categoria: "" });
+  const [filtros, setFiltros] = useState({ nombre_cliente: "", categoria: "" , sucursal: ""});
   const [datos, setDatos] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [categoria, setCategorias] = useState([]);
-
+  const [sucursales, setSucursales] = useState("");
 
   const [paginaActual, setPaginaActual] = useState(1);
   const [filasPorPagina, setFilasPorPagina] = useState(5);
@@ -36,9 +36,11 @@ export default function EstadisticasVentas() {
   const obtenerEstadisticas = async () => {
     setCargando(true);
     try {
+      setSucursales(filtros.sucursal);
       const params = new URLSearchParams({
         nombre_cliente: filtros.nombre_cliente,
         categoria: filtros.categoria,
+        sucursal: filtros.sucursal,
       });
       const respuesta = await fetch(`http://localhost:3000/estadisticas/ventas?${params}`);
       const data = await respuesta.json();
@@ -51,9 +53,15 @@ export default function EstadisticasVentas() {
     }
   };
 
-  const restaurarFiltros = () => {
-    setFiltros({ nombre_cliente: "", categoria: "" });
+
+  useEffect(() => {
     obtenerEstadisticas();
+  }, [filtros]);
+
+  const restaurarFiltros = () => {
+    setFiltros({ nombre_cliente: "", categoria: "", sucursal: "" });
+    setSucursales("");
+    toastr.info("Filtros restaurados");
   };
 
   useEffect(() => {
@@ -77,6 +85,15 @@ export default function EstadisticasVentas() {
 
         {/* Filtros */}
         <div className="Tablas-filtros">
+          <select
+            name="sucursal"
+            value={filtros.sucursal}
+            onChange={manejarCambio}
+          >
+            <option value="">Todas las sucursales</option>
+            <option value="Limón">Limón</option>
+            <option value="San José">San José</option>
+          </select>
           <input type="text" name="nombre_cliente" placeholder="Nombre del cliente" value={filtros.nombre_cliente} onChange={manejarCambio}/>
           <select
             name="categoria"
@@ -106,6 +123,7 @@ export default function EstadisticasVentas() {
                 <tr>
                   <th>Categoría</th>
                   <th>Cliente</th>
+                  {sucursales !== "" && <th>Sucursal</th>}
                   <th>Facturas</th>
                   <th>Mín</th>
                   <th>Máx</th>
@@ -118,6 +136,7 @@ export default function EstadisticasVentas() {
                     <tr key={i}>
                       <td>{fila.categoria}</td>
                       <td>{fila.cliente}</td>
+                      {sucursales !== "" && <td>{sucursales}</td>}
                       <td>{fila.facturas}</td>
                       <td>{Number(fila.venta_min ?? 0).toLocaleString()}</td>
                       <td>{Number(fila.venta_max ?? 0).toLocaleString()}</td>

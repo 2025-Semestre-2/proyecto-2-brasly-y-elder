@@ -40,9 +40,14 @@ export default function EstadisticasProveedores() {
     }
   };
 
+
+  useEffect(() => {
+    obtenerEstadisticas();
+  }, [filtros]);
+
   const restaurarFiltros = () => {
     setFiltros({ nombre_proveedor: "", categoria: "" });
-    obtenerEstadisticas();
+    toastr.info("Filtros restaurados");
   };
 
   useEffect(() => {

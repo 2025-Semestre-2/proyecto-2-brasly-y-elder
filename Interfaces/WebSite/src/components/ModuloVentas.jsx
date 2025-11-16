@@ -8,9 +8,11 @@ export default function ModuloVentas() {
     fechamax: "",
     montomin: "",
     montomax: "",
+    sucursal: "",
   });
   const [cargando, setCargando] = useState(false);
   const [facturas, setFacturas] = useState([]);
+  const [sucursales, setSucursales] = useState(""); 
 
   // Paginación dinámica
   const [paginaActual, setPaginaActual] = useState(1);
@@ -60,6 +62,11 @@ export default function ModuloVentas() {
     setFiltros((prev) => ({ ...prev, [name]: value }));
   };
 
+  const manejarCambio = (e) => {
+    const { name, value } = e.target;
+    setFiltros({ ...filtros, [name]: value });
+  };
+
   const manejarCambioEntero = (e) => {
     const { name, value } = e.target;
     // Solo dígitos; elimina cualquier carácter no numérico
@@ -73,9 +80,16 @@ export default function ModuloVentas() {
   };
 
   const restaurarFiltros = () => {
-    setFiltros({ nombre: "", fechamin: "", fechamax: "", montomin: "", montomax: "" });
-    obtenerFacturas();
+    setFiltros({ nombre: "", fechamin: "", fechamax: "", montomin: "", montomax: "",sucursal: "" });
+    toastr.info("Filtros restaurados");
   };
+
+  useEffect(() => {
+    obtenerFacturas();
+  }, [filtros]);
+
+
+
 
   const navigate = useNavigate();
   const irADetalle = (id) => {
@@ -92,10 +106,10 @@ export default function ModuloVentas() {
   const obtenerFacturas = async () => {
     setCargando(true);
     try {
-      // Construimos los params omitiendo vacíos para que el API use defaults / NULL
+      setSucursales(filtros.sucursal);
       const params = new URLSearchParams();
       if (filtros.nombre) params.set("nombre_cliente", filtros.nombre);
-      if (filtros.fechamin) params.set("fecha_inicio", filtros.fechamin); // AAAA-MM-DD
+      if (filtros.fechamin) params.set("fecha_inicio", filtros.fechamin);
       if (filtros.fechamax) params.set("fecha_fin", filtros.fechamax);
       if (filtros.montomin) params.set("monto_min", filtros.montomin);
       if (filtros.montomax) params.set("monto_max", filtros.montomax);
@@ -128,6 +142,15 @@ export default function ModuloVentas() {
 
         {/* Filtros */}
         <div className="Tablas-filtros">
+          <select
+            name="sucursal"
+            value={filtros.sucursal}
+            onChange={manejarCambio}
+          >
+            <option value="">Todas las sucursales</option>
+            <option value="Limón">Limón</option>
+            <option value="San José">San José</option>
+          </select>
           <input type="text" name="nombre" placeholder="Nombre del Cliente" value={filtros.nombre} onChange={manejarCambioTexto} />
           <input type="date" name="fechamin" placeholder="Fecha mínima (AAAA-MM-DD)" value={filtros.fechamin} onChange={manejarCambioFecha} />
           <input type="date" name="fechamax" placeholder="Fecha máxima (AAAA-MM-DD)" value={filtros.fechamax} onChange={manejarCambioFecha} />
@@ -161,6 +184,7 @@ export default function ModuloVentas() {
               <thead>
                 <tr>
                   <th>Número de factura</th>
+                  {sucursales !== "" && <th>Sucursal</th>}
                   <th>Fecha</th>
                   <th>Cliente</th>
                   <th>Método de entrega</th>
@@ -176,6 +200,7 @@ export default function ModuloVentas() {
                       style={{ cursor: "pointer" }}
                     >
                       <td>{c.numero_factura}</td>
+                      {sucursales !== "" && <td>{sucursales}</td>} 
                       <td>{c.fecha}</td>
                       <td>{c.cliente}</td>
                       <td>{c.metodo_entrega}</td>

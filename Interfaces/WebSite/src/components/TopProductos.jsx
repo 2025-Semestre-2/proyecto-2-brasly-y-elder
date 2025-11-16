@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
+import toastr from "toastr";
 
 export default function TopProductos() {
+
   const [año, setAño] = useState("");
   const [datos, setDatos] = useState([]);
   const [cargando, setCargando] = useState(false);
+  const [filtros, setFiltros] = useState({ sucursal: "" });
+  const [sucursales, setSucursales] = useState("");
+
+  const manejarCambio = (e) => {
+    const { name, value } = e.target;
+    setFiltros({ ...filtros, [name]: value });
+  };
 
   // Paginación
   const [paginaActual, setPaginaActual] = useState(1);
@@ -18,16 +27,32 @@ export default function TopProductos() {
   const obtenerDatos = async () => {
     setCargando(true);
     try {
-      const params = new URLSearchParams({ año });
-      const respuesta = await fetch(`http://localhost:3000/Estadisticas/top_productos?${params}`);
+      setSucursales(filtros.sucursal);
+      const params = new URLSearchParams({año,sucursal: filtros.sucursal,});
+      const respuesta = await fetch(
+        `http://localhost:3000/Estadisticas/top_productos?${params}`
+      );
+
       const data = await respuesta.json();
       setDatos(data);
       setPaginaActual(1);
+
     } catch (error) {
       console.error("Error al obtener top productos:", error);
     } finally {
       setCargando(false);
     }
+  };
+
+  useEffect(() => {
+    obtenerDatos();
+  }, [sucursales, año]);
+
+  const restaurarFiltros = () => {
+    setFiltros({ sucursal: "" });
+    setSucursales("");
+    setAño("");
+    toastr.info("Filtros restaurados");
   };
 
   useEffect(() => {
@@ -37,7 +62,7 @@ export default function TopProductos() {
     return () => window.removeEventListener("resize", ajustarFilas);
   }, []);
 
-  // paginación
+
   const totalPaginas = Math.max(Math.ceil(datos.length / filasPorPagina), 1);
   const indiceUltima = paginaActual * filasPorPagina;
   const indicePrimera = indiceUltima - filasPorPagina;
@@ -50,15 +75,26 @@ export default function TopProductos() {
 
         {/* Filtros */}
         <div className="Tablas-filtros">
+          <select
+            name="sucursal"
+            value={filtros.sucursal}
+            onChange={manejarCambio}
+          >
+            <option value="">Todas las sucursales</option>
+            <option value="Limón">Limón</option>
+            <option value="San José">San José</option>
+          </select>
+
           <input
             type="number"
             placeholder="Año (opcional)"
             value={año}
             onChange={(e) => setAño(e.target.value)}
           />
+
           <div className="flex gap-2">
             <button onClick={obtenerDatos}>Buscar</button>
-            <button onClick={() => { setAño(""); obtenerDatos(); }}>Restaurar</button>
+            <button onClick={restaurarFiltros}>Restaurar</button>
           </div>
         </div>
 
@@ -72,33 +108,41 @@ export default function TopProductos() {
                 <tr>
                   <th>Año</th>
                   <th>ID Producto</th>
+                    {sucursales !== "" && <th>Sucursal</th>}
                   <th>Producto</th>
                   <th>Ganancia Total</th>
                   <th>Posición</th>
                 </tr>
               </thead>
+
               <tbody>
                 {filasActuales.length > 0 ? (
                   filasActuales.map((fila, i) => (
                     <tr key={i}>
                       <td>{fila.año}</td>
                       <td>{fila.id_producto}</td>
+                       {sucursales !== "" && <td>{sucursales}</td>}
+
                       <td>{fila.producto}</td>
-                      <td>{Number(fila.ganancia_total ?? 0).toLocaleString()}</td>
+                      <td>
+                        {Number(fila.ganancia_total ?? 0).toLocaleString()}
+                      </td>
                       <td>{fila.posicion}</td>
                     </tr>
                   ))
                 ) : (
-                  <tr><td colSpan="5" className="text-center py-4 text-gray-500">No hay resultados.</td></tr>
+                  <tr>
+                    <td colSpan="6" className="text-center py-4 text-gray-500">
+                      No hay resultados.
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
-
-            {/* Paginación */}
             <div className="Tablas-paginacion">
-              <button onClick={() => setPaginaActual(p => Math.max(p - 1, 1))} disabled={paginaActual === 1}>Anterior</button>
+              <button onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))} disabled={paginaActual === 1}>Anterior</button>
               <span>{paginaActual} / {totalPaginas}</span>
-              <button onClick={() => setPaginaActual(p => Math.min(p + 1, totalPaginas))} disabled={paginaActual === totalPaginas}>Siguiente</button>
+              <button onClick={() => setPaginaActual((p) => Math.min(p + 1, totalPaginas))} disabled={paginaActual === totalPaginas}>Siguiente</button>
             </div>
           </>
         )}
