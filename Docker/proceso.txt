@@ -1,0 +1,46 @@
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+
+docker network create wwi-web
+
+docker run --net wwi-web -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Admin1234*" -e "MSSQL_AGENT_ENABLED=true" -p 1534:1433 --name SanJose -d mcr.microsoft.com/mssql/server:2022-latest 
+docker run --net wwi-web -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Admin1234*" -e "MSSQL_AGENT_ENABLED=true" -p 1535:1433 --name Limon -d mcr.microsoft.com/mssql/server:2022-latest 
+docker run --net wwi-web -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Admin1234*" -e "MSSQL_AGENT_ENABLED=true" -p 1536:1433 --name Corp -d mcr.microsoft.com/mssql/server:2022-latest 
+
+
+docker exec -it SanJose /opt/mssql/bin/mssql-conf set sqlagent.enabled true
+docker exec -it Limon /opt/mssql/bin/mssql-conf set sqlagent.enabled true
+docker exec -it Corp /opt/mssql/bin/mssql-conf set sqlagent.enabled true
+
+
+docker stop SanJose
+docker stop Limon
+docker stop Corp
+
+docker start SanJose
+docker start Limon
+docker start Corp
+
+
+docker exec -it SanJose bash
+// EN LA TERMINAL COPIAR ESTO
+
+    mkdir /var/opt/mssql/ReplData
+    chmod 777 /var/opt/mssql/ReplData
+
+// PARA SALIR USAR CTRL + D
+
+docker exec -it Limon bash
+    mkdir /var/opt/mssql/ReplData
+    chmod 777 /var/opt/mssql/ReplData
+    ! CTRL + D
+
+docker exec -it Corp bash
+    mkdir /var/opt/mssql/ReplData
+    chmod 777 /var/opt/mssql/ReplData
+    ! CTRL + D
+
+docker cp C:\BASES-BAK\WideWorldImporters-Full.bak Limon:/var/opt/mssql/data   
+docker cp C:\BASES-BAK\WideWorldImporters-Full.bak SanJose:/var/opt/mssql/data   
+docker cp C:\BASES-BAK\WideWorldImporters-Full.bak Corp:/var/opt/mssql/data   
+
+
