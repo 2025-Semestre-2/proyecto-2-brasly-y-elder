@@ -18,14 +18,12 @@ export function AuthProvider({ children }) {
   const login = (user) => {
     setRol(user.rol);
     setSucursal(user.sucursal);
-
     localStorage.setItem("usuario", JSON.stringify(user));
   };
 
   const logout = () => {
     setRol(null);
     setSucursal(null);
-
     localStorage.removeItem("usuario");
     localStorage.removeItem("token");
   };

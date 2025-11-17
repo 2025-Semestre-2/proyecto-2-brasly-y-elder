@@ -1,40 +1,27 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
 
+  const { login } = useAuth(); 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    try {
-      const respuesta = await fetch("http://localhost:4000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email,
-          password: pass,
-        }),
-      });
-
-      const data = await respuesta.json();
-
-      if (!respuesta.ok) {
-        setError(data.message || "Credenciales inválidas");
-        return;
-      }
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("usuario", JSON.stringify(data.usuario));
-      localStorage.setItem("sucursal", data.usuario.sucursal);
-
-      console.log("Usuario:", data.usuario);
-      onLogin();
-
-    } catch (err) {
-      setError("Error al conectar con el servidor");
+    if (email === "" || pass === "") {
+      setError("Debes llenar todos los campos");
+      return;
     }
+    const usuario = {
+      sucursal: "Limon",
+      rol: "Administrador"
+    };
+    login(usuario);
+    onLogin();
   };
 
   return (

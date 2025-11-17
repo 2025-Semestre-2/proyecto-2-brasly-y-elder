@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext"; 
+import SinAcceso from "./ui/sinAccesoAdm.jsx";
 
 export default function TopClientes() {
+
+  const { rol } = useAuth(); 
+
+  if (rol !== "Corporativo") {
+    return (
+      <SinAcceso />
+    );
+  }
   const [rangos, setRangos] = useState({ año_inicio: "", año_fin: "" });
   const [datos, setDatos] = useState([]);
   const [cargando, setCargando] = useState(false);
