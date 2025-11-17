@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext"; 
+import SinAcceso from "./ui/sinAccesoAdm.jsx";
 
 export default function EstadisticasProveedores() {
+  const { rol } = useAuth(); 
+
+  if (rol !== "Corporativo") {  
+    return (
+      <SinAcceso />
+    );
+  }
+
   const [filtros, setFiltros] = useState({
     nombre_proveedor: "",
     categoria: "",
   });
 
-  const [datos, setDatos] = useState([]);        // SIEMPRE arreglo
+  const [datos, setDatos] = useState([]);       
   const [cargando, setCargando] = useState(false);
   const [categorias, setCategorias] = useState([]);
   const [errorApi, setErrorApi] = useState("");

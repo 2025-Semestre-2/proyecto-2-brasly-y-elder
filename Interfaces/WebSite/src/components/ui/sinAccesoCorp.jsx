@@ -10,7 +10,7 @@ export default function SinAcceso() {
           </div>
           <h2 className="acceso-title">Acceso Denegado</h2>
           <p className="acceso-text">
-            Lo sentimos, usted es administrador y no tiene acceso a este apartado.
+            Lo sentimos, usted es Corporativo y no tiene acceso a este apartado.
           </p>
 
         </div>

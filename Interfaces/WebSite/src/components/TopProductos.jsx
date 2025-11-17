@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
 import toastr from "toastr";
+import { useAuth } from "../context/AuthContext"; 
+import SinAcceso from "./ui/sinAccesoAdm.jsx";
 
 export default function TopProductos() {
+
+  const { rol } = useAuth(); 
+
+  if (rol !== "Corporativo") {
+    return (
+      <SinAcceso />
+    );
+  }
 
   const [año, setAño] = useState("");
   const [datos, setDatos] = useState([]);
