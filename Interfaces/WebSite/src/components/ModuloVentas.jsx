@@ -7,7 +7,7 @@ export default function ModuloVentas() {
 
   const { rol } = useAuth(); 
 
-  if (rol !== "Administrador") {
+  if (rol !== "administrador") {
     return (
       <SinAcceso />
     );

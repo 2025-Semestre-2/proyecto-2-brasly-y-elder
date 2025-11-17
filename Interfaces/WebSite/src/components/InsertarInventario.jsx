@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function AgregarProducto() {
-  const { sucursal } = useAuth(); // ← Sucursal del usuario
+  const { sucursal } = useAuth(); // ← Sucursal desde el contexto
 
   const [proveedores, setProveedores] = useState([]);
   const [colores, setColores] = useState([]);
@@ -13,6 +13,7 @@ export default function AgregarProducto() {
 
   const navigate = useNavigate();
 
+  // FORMULARIO BASE (NOMBRES EXACTOS COMO LOS PROCEDURES)
   const [form, setForm] = useState({
     stockitemname: "",
     brand: "",
@@ -33,6 +34,9 @@ export default function AgregarProducto() {
     taxrate: 0
   });
 
+  // ============================
+  // CARGAR CATÁLOGOS
+  // ============================
   const cargarListas = async () => {
     try {
       const urls = [
@@ -43,7 +47,9 @@ export default function AgregarProducto() {
       ];
 
       const [p, c, pa, g] = await Promise.all(
-        urls.map(u => fetch("http://localhost:3000" + u).then(r => r.json()))
+        urls.map(u =>
+          fetch("http://localhost:3000" + u).then(r => r.json())
+        )
       );
 
       setProveedores(p);
@@ -58,14 +64,20 @@ export default function AgregarProducto() {
 
   useEffect(() => { cargarListas(); }, []);
 
+
+  // ============================
+  // MANEJO DEL FORM
+  // ============================
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setForm(prev => ({
       ...prev,
       [name]: type === "checkbox" ? (checked ? 1 : 0) : value
     }));
   };
 
+  // RESETEAR FORMULARIO
   const resetForm = () => {
     setForm({
       stockitemname: "",
@@ -88,12 +100,15 @@ export default function AgregarProducto() {
     });
   };
 
+
+  // ============================
+  // ENVIAR FORMULARIO
+  // ============================
   const onSubmit = async (e) => {
     e.preventDefault();
     setCargando(true);
 
     try {
-
       const payload = {
         ...form,
         supplierid: Number(form.supplierid),
@@ -106,8 +121,8 @@ export default function AgregarProducto() {
         unitprice: Number(form.unitprice),
         recommendedretailprice: form.recommendedretailprice ? Number(form.recommendedretailprice) : null,
         taxrate: Number(form.taxrate),
-        ischillerstock: form.ischillerstock ? 1 : 0 ,
-        sucursal: sucursal  // ← MANDAR LA SUCURSAL
+        ischillerstock: form.ischillerstock ? 1 : 0,
+        sucursal: sucursal // ← MUY IMPORTANTE
       };
 
       const resp = await fetch("http://localhost:3000/inventario/insertar", {
@@ -127,40 +142,52 @@ export default function AgregarProducto() {
     } catch (err) {
       alert(err.message);
       console.error(err);
-
     } finally {
       setCargando(false);
     }
   };
 
-    return (
+
+  // ============================================================
+  //          INTERFAZ GRÁFICA CORREGIDA 100%
+  // ============================================================
+  return (
     <main className="content">
       <div className="Sup-contenedor">
         <form className="FormNuevoProducto" onSubmit={onSubmit}>
           <h1 className="titulo-pagina">Agregar Nuevo Producto</h1>
-           <button className="boton-volver" onClick={() => navigate(-1)}>Volver</button>
+          <button className="boton-volver" onClick={() => navigate(-1)}>Volver</button>
           <p className="subtitulo-pagina">
-            Ingrese los detalles del nuevo artículo de inventario. Los campos requeridos están marcados con asterisco.
+            Ingrese los detalles del nuevo artículo de inventario.
           </p>
 
           <div className="grid-pagina">
-            {/* Columna Izquierda */}
+
+            {/* ================= COLUMNA IZQUIERDA ================= */}
             <div className="col">
-              {/* Información Básica */}
+
+              {/* INFO BÁSICA */}
               <section className="card">
                 <h2 className="card-title">Información Básica</h2>
-                <p className="card-desc">Detalles esenciales del producto e identificación</p>
 
                 <div className="grid-2">
                   <div className="field">
                     <label>Nombre del Producto *</label>
-                    <input name="StockItemName" value={form.StockItemName} onChange={onChange} placeholder="ej., Camiseta de Algodón Premium" required />
+                    <input
+                      name="stockitemname"
+                      value={form.stockitemname}
+                      onChange={onChange}
+                      required
+                    />
                   </div>
+
                   <div className="field">
                     <label>Color</label>
-                    <select name="ColorID" value={form.ColorID} onChange={onChange}>
-                      <option value="">Seleccionar color</option>
-                      {colores.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                    <select name="colorid" value={form.colorid} onChange={onChange}>
+                      <option value="">Seleccionar</option>
+                      {colores.map(c =>
+                        <option key={c.id} value={c.id}>{c.nombre}</option>
+                      )}
                     </select>
                   </div>
                 </div>
@@ -168,124 +195,200 @@ export default function AgregarProducto() {
                 <div className="grid-2">
                   <div className="field">
                     <label>Marca</label>
-                    <input name="Brand" value={form.Brand} onChange={onChange} placeholder="ej., Nike" />
+                    <input name="brand" value={form.brand} onChange={onChange} />
                   </div>
+
                   <div className="field">
                     <label>Tamaño</label>
-                    <input name="Size" value={form.Size} onChange={onChange} placeholder="ej., XL, 42, 250ml" />
+                    <input name="size" value={form.size} onChange={onChange} />
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div className="field">
                     <label>Código de Barras</label>
-                    <input name="Barcode" value={form.Barcode} onChange={onChange} placeholder="ej., 1234567890123" />
+                    <input name="barcode" value={form.barcode} onChange={onChange} />
                   </div>
+
                   <div className="field">
-                    <label>Grupo de Producto</label>
-                    <select name="GrupoID" value={form.GrupoID} onChange={onChange}>
-                      <option value="">Seleccionar grupo</option>
-                      {grupos.map(g => <option key={g.id} value={g.id}>{g.nombre}</option>)}
+                    <label>Grupo</label>
+                    <select name="grupo" onChange={onChange}>
+                      <option value="">Seleccionar</option>
+                      {grupos.map(g =>
+                        <option key={g.id} value={g.id}>{g.nombre}</option>
+                      )}
                     </select>
                   </div>
                 </div>
               </section>
 
-              {/* Proveedor y Empaque */}
+              {/* PROVEEDOR & EMPAQUE */}
               <section className="card">
                 <h2 className="card-title">Proveedor y Empaque</h2>
-                <p className="card-desc">Detalles del proveedor y configuraciones de empaque</p>
 
                 <div className="field">
                   <label>Proveedor *</label>
-                  <select name="SupplierID" value={form.SupplierID} onChange={onChange} required>
+                  <select
+                    name="supplierid"
+                    value={form.supplierid}
+                    onChange={onChange}
+                    required
+                  >
                     <option value="">Seleccionar proveedor</option>
-                    {proveedores.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
+                    {proveedores.map(p =>
+                      <option key={p.id} value={p.id}>{p.nombre}</option>
+                    )}
                   </select>
                 </div>
 
                 <div className="grid-2">
                   <div className="field">
                     <label>Paquete Unitario *</label>
-                    <select name="UnitPackageID" value={form.UnitPackageID} onChange={onChange} required>
-                      <option value="">Seleccionar paquete unitario</option>
-                      {paquetes.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
+                    <select
+                      name="unitpackageid"
+                      value={form.unitpackageid}
+                      onChange={onChange}
+                      required
+                    >
+                      <option value="">Seleccionar</option>
+                      {paquetes.map(p =>
+                        <option key={p.id} value={p.id}>{p.nombre}</option>
+                      )}
                     </select>
                   </div>
+
                   <div className="field">
                     <label>Paquete Exterior *</label>
-                    <select name="OuterPackageID" value={form.OuterPackageID} onChange={onChange} required>
-                      <option value="">Seleccionar paquete exterior</option>
-                      {paquetes.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
+                    <select
+                      name="outerpackageid"
+                      value={form.outerpackageid}
+                      onChange={onChange}
+                      required
+                    >
+                      <option value="">Seleccionar</option>
+                      {paquetes.map(p =>
+                        <option key={p.id} value={p.id}>{p.nombre}</option>
+                      )}
                     </select>
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div className="field">
-                    <label>Cantidad por Exterior *</label>
-                    <input type="number" min="1" name="QuantityPerOuter" value={form.QuantityPerOuter} onChange={onChange} />
+                    <label>Cantidad Exterior *</label>
+                    <input type="number"
+                      name="quantityperouter"
+                      value={form.quantityperouter}
+                      onChange={onChange}
+                      min="1"
+                    />
                   </div>
+
                   <div className="field">
-                    <label>Tiempo de Entrega (Días) *</label>
-                    <input type="number" min="0" name="LeadTimeDays" value={form.LeadTimeDays} onChange={onChange} />
+                    <label>Lead Time (días)</label>
+                    <input type="number"
+                      name="leadtimedays"
+                      value={form.leadtimedays}
+                      onChange={onChange}
+                      min="0"
+                    />
                   </div>
                 </div>
               </section>
 
-              {/* Precios e Impuestos */}
+              {/* PRECIOS */}
               <section className="card">
                 <h2 className="card-title">Precios e Impuestos</h2>
-                <p className="card-desc">Información de costos y precios</p>
 
                 <div className="grid-3">
                   <div className="field">
-                    <label>Precio Unitario ($) *</label>
-                    <input type="number" step="0.01" min="0" name="UnitPrice" value={form.UnitPrice} onChange={onChange} required />
+                    <label>Precio Unitario *</label>
+                    <input
+                      type="number"
+                      name="unitprice"
+                      step="0.01"
+                      value={form.unitprice}
+                      onChange={onChange}
+                    />
                   </div>
+
                   <div className="field">
-                    <label>Precio de Venta ($)</label>
-                    <input type="number" step="0.01" min="0" name="RecommendedRetailPrice" value={form.RecommendedRetailPrice} onChange={onChange} />
+                    <label>Precio Venta</label>
+                    <input
+                      type="number"
+                      name="recommendedretailprice"
+                      step="0.01"
+                      value={form.recommendedretailprice || ""}
+                      onChange={onChange}
+                    />
                   </div>
+
                   <div className="field">
-                    <label>Tasa de Impuesto (%) *</label>
-                    <input type="number" step="0.001" min="0" name="TaxRate" value={form.TaxRate} onChange={onChange} required />
+                    <label>Impuesto *</label>
+                    <input
+                      type="number"
+                      name="taxrate"
+                      step="0.001"
+                      value={form.taxrate}
+                      onChange={onChange}
+                    />
                   </div>
                 </div>
               </section>
             </div>
 
-            {/* Columna Derecha */}
+            {/* ================ COLUMNA DERECHA ================ */}
             <div className="col">
-              {/* Propiedades Físicas */}
+
+              {/* PROPIEDADES FÍSICAS */}
               <section className="card">
                 <h2 className="card-title">Propiedades Físicas</h2>
-                <p className="card-desc">Peso y requisitos de almacenamiento</p>
 
                 <div className="field">
-                  <label>Peso por Unidad (kg) *</label>
-                  <input type="number" step="0.001" min="0" name="TypicalWeightPerUnit" value={form.TypicalWeightPerUnit} onChange={onChange} required />
+                  <label>Peso Unitario *</label>
+                  <input
+                    type="number"
+                    name="typicalweightperunit"
+                    step="0.001"
+                    value={form.typicalweightperunit}
+                    onChange={onChange}
+                  />
                 </div>
 
                 <div className="checkline">
-                  <input id="IsChillerStock" type="checkbox" name="IsChillerStock" checked={!!form.IsChillerStock} onChange={onChange} />
-                  <label htmlFor="IsChillerStock">Requiere Refrigeración</label>
+                  <input
+                    type="checkbox"
+                    name="ischillerstock"
+                    checked={form.ischillerstock === 1}
+                    onChange={onChange}
+                  />
+                  <label>Requiere Refrigeración</label>
                 </div>
               </section>
 
-              {/* Información Adicional */}
+
+              {/* COMENTARIOS */}
               <section className="card">
                 <h2 className="card-title">Información Adicional</h2>
-                <p className="card-desc">Notas de marketing e internas opcionales</p>
 
                 <div className="field">
-                  <label>Comentarios de Marketing</label>
-                  <textarea name="MarketingComments" rows={6} value={form.MarketingComments} onChange={onChange} placeholder="Ingrese descripciones de marketing, características, beneficios..." />
+                  <label>Marketing</label>
+                  <textarea
+                    name="marketingcomments"
+                    rows={4}
+                    value={form.marketingcomments}
+                    onChange={onChange}
+                  />
                 </div>
 
                 <div className="field">
-                  <label>Notas Internas</label>
-                  <textarea name="InternalComments" rows={5} value={form.InternalComments} onChange={onChange} placeholder="Ingrese notas internas, instrucciones de manejo..." />
+                  <label>Comentarios Internos</label>
+                  <textarea
+                    name="internalcomments"
+                    rows={3}
+                    value={form.internalcomments}
+                    onChange={onChange}
+                  />
                 </div>
               </section>
             </div>
@@ -295,13 +398,14 @@ export default function AgregarProducto() {
             <button type="submit" disabled={cargando} className="btn-primario">
               {cargando ? "Guardando..." : "Guardar Producto"}
             </button>
+
             <button type="button" onClick={resetForm} className="btn-secundario">
               Resetear Formulario
             </button>
           </div>
+
         </form>
       </div>
-    </main>
-  );
-
+    </main>
+  );
 }

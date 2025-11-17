@@ -1,10 +1,3 @@
-process.on("uncaughtException", (err) => {
-  console.error("❌ EXCEPCIÓN NO CAPTURADA:", err);
-});
-
-process.on("unhandledRejection", (reason) => {
-  console.error("❌ PROMESA NO MANEJADA:", reason);
-});
 
 const express = require("express");
 const sql = require("mssql");
@@ -97,6 +90,27 @@ app.get("/inventario/distribuido", async (req, res) => {
     res.status(500).json({ error: "Error en inventario distribuido." });
   }
 });
+
+app.get("/inventario", async (req, res) => {
+  try {
+    const { nombre = "", sucursal } = req.query;
+
+    const pool = poolSucursal(sucursal);
+    if (!pool) return res.status(400).json({ error: "Sucursal inválida" });
+
+    const r = pool.request();
+    r.input("nombre", sql.NVarChar(100), nombre);
+    r.input("sucursal", sql.NVarChar(20), sucursal);
+
+    const result = await r.execute("dbo.sp_inventario_local");
+    res.json(result.recordset);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo inventario local" });
+  }
+});
+
 
 // Detalle distribuido por sucursal
 app.get("/inventario/detalle", async (req, res) => {

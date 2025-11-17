@@ -258,18 +258,8 @@ begin
     order by StockGroupName;
 end;
 go
-create or alter procedure dbo.ListarProveedores
-as
-begin
-    set nocount on;
 
-    select 
-        SupplierID as id,
-        SupplierName as nombre
-    from Purchasing.Suppliers
-    order by SupplierName;
-end;
-go
+
 create or alter procedure dbo.ListarCategoriasClientes
 as
 begin
@@ -306,3 +296,53 @@ begin
     order by StockGroupName;
 end;
 go
+
+
+USE WideWorldImporters;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_inventario_local
+    @nombre NVARCHAR(100) = N'',
+    @sucursal NVARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @sql NVARCHAR(MAX);
+	
+    DECLARE @dbprefix SYSNAME;
+
+    SET @dbprefix = CASE UPPER(@sucursal)
+        WHEN 'SANJOSE' THEN 'Srv_SanJose.WideWorldImporters'
+        WHEN 'LIMON'   THEN 'Srv_Limon.WideWorldImporters'
+        WHEN 'CORP'    THEN 'WideWorldImporters'
+    END;
+
+    IF (@dbprefix IS NULL)
+    BEGIN
+        RAISERROR('Sucursal inválida', 16, 1);
+        RETURN;
+    END
+
+    SET @sql = '
+        SELECT
+            si.StockItemID AS id,
+            si.StockItemName AS nombreproducto,
+            si.Brand AS brand,
+            si.[Size] AS size,
+            si.UnitPrice AS unitprice,
+            si.QuantityPerOuter AS quantityperouter,
+            sih.QuantityOnHand AS cantidad
+        FROM ' + @dbprefix + '.Warehouse.StockItems si
+        LEFT JOIN ' + @dbprefix + '.Warehouse.StockItemHoldings sih
+            ON si.StockItemID = sih.StockItemID
+        WHERE (' + CASE WHEN @nombre = '' THEN '1=1'
+                        ELSE 'si.StockItemName LIKE ''%' + @nombre + '%'''
+                   END + ')
+        ORDER BY si.StockItemName;
+    ';
+
+    EXEC (@sql);
+
+END;
+GO

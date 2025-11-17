@@ -23,7 +23,7 @@ export default function ModuloInventario() {
 
   const { rol } = useAuth(); 
 
-  if (rol !== "Administrador") {
+  if (rol !== "administrador") {
     return (
       <SinAcceso />
     );

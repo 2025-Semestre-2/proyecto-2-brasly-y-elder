@@ -38,10 +38,12 @@ export default function TopProductos() {
     setCargando(true);
     try {
       setSucursales(filtros.sucursal);
-      const params = new URLSearchParams({año,sucursal: filtros.sucursal,});
-      const respuesta = await fetch(
-        `http://localhost:3000/Estadisticas/top_productos?${params}`
-      );
+      const params = new URLSearchParams({ anio: año, sucursal: filtros.sucursal });
+
+   const respuesta = await fetch(
+  `http://localhost:3000/estadisticas/top_productos?${params}`
+);
+
 
       const data = await respuesta.json();
       setDatos(data);
@@ -90,9 +92,10 @@ export default function TopProductos() {
             value={filtros.sucursal}
             onChange={manejarCambio}
           >
-            <option value="">Todas las sucursales</option>
-            <option value="Limón">Limón</option>
-            <option value="San José">San José</option>
+        <option value="LIMON">Limón</option>
+<option value="SANJOSE">San José</option>
+<option value="CORP">Corporativo</option>
+
           </select>
 
           <input

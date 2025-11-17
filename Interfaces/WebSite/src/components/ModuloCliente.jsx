@@ -7,7 +7,7 @@ export default function ModuloCliente() {
 
   const { rol } = useAuth(); 
 
-  if (rol !== "Administrador") {
+  if (rol !== "administrador") {
     return (
       <SinAcceso />
     );
