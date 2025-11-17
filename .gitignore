@@ -1,163 +1,139 @@
-# --- Node / Monorepo ---
-**/node_modules/
-**/.pnpm-store/
-**/npm-debug.log*
-**/yarn-debug.log*
-**/yarn-error.log*
-**/pnpm-debug.log*
-**/.eslintcache
-**/.stylelintcache
-**/.tsbuildinfo
+#############################
+#     GLOBAL / GENERAL      #
+#############################
 
-# --- Vite / Builds / Caches ---
-**/dist/
-**/build/
-**/.vite/
-**/.cache/
-**/.parcel-cache/
-**/.nuxt/
-**/.next/
-**/.svelte-kit/
-
-# --- Tests / Coverage ---
-**/coverage/
-**/.nyc_output/
-
-# --- Env / Secrets (mantén un .env.example) ---
-**/.env
-**/.env.*
-!.env.example
-
-# --- Logs propios de apps ---
-**/logs/
-**/*.log
-
-# --- SO / Editor ---
-.DS_Store
-Thumbs.db
-desktop.ini
-.idea/
-.vscode/
-# (Si quieres versionar recomendaciones, quita la línea anterior y deja solo:)
-# .vscode/*
-# !.vscode/extensions.json
-# !.vscode/settings.json
-# !.vscode/launch.json
-
-# --- BD (SQL Server / Postgres dumps locales) ---
-*.mdf
-*.ldf
-*.ndf
-*.bak
-*.trn
-*.dump
-*.backup
-
-# --- Misc ---
-*.swp
-*.swc
-*.orig
-
-# ── dependencias de paquetes (monorepo)
-**/node_modules/
-**/bower_components/
-
-# ── builds y artefactos
-**/dist/
-**/build/
-**/out/
-**/.next/
-**/.nuxt/
-**/.svelte-kit/
-**/.angular/
-**/.parcel-cache/
-**/.cache/
-**/.vite/
-**/coverage/
-**/.nyc_output/
-
-# ── mapas de fuente generados (evita subir miles de *.map)
-dist/**/*.map
-build/**/*.map
-out/**/*.map
-coverage/**/*.map
-# (si también generas d.ts.map)
-dist/**/*.d.ts.map
-build/**/*.d.ts.map
-
-# ── typescript
-**/*.tsbuildinfo
-
-# ── logs y pids
-**/*.log
+# Node / npm / pnpm / yarn
+node_modules/
+.pnpm-store/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-**/pids/
-**/*.pid
-**/*.seed
-**/*.pid.lock
 
-# ── lint/formatter caches
-**/.eslintcache
-**/.stylelintcache
-**/.prettier-cache
+# Common build / caches
+dist/
+build/
+.out/
+.temp/
+.cache/
+.temp/
+.vite/
+.parcel-cache/
 
-# ── pruebas/e2e
-**/cypress/screenshots/
-**/cypress/videos/
-**/playwright-report/
-**/test-results/
-
-# ── entornos/secretos (¡no subas credenciales!)
+# Env / secretos
 .env
 .env.*
 !.env.example
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
-# ── herramientas de despliegue
-.vercel/
-.netlify/
-.aws/
-.serverless/
-terraform.tfstate
-terraform.tfstate.*
-*.tfstate.backup
-.terraform/
+# Logs
+logs/
+*.log
+*.pid
+*.pid.lock
 
-# ── editores/ide
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors / IDE
+.idea/
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
-.idea/
+!.vscode/launch.json
+
+#############################
+#     BACKEND / EXPRESS     #
+#############################
+
+# Compilación TS (si agregas TypeScript)
+*.tsbuildinfo
+*.d.ts
+*.map
+dist/**/*.map
+
+# PM2 logs
+pm2.log
+pids/
+
+# Uploads (si tu API guarda archivos)
+uploads/
+public/uploads/
+
+#############################
+#     FRONTEND / VITE       #
+#############################
+
+# Vite
+.vite/
+vite.svg
+
+# Framework builds
+.next/
+.nuxt/
+.svelte-kit/
+.angular/
+
+#############################
+#      TESTS / E2E          #
+#############################
+
+coverage/
+.cypress/
+cypress/screenshots/
+cypress/videos/
+playwright-report/
+test-results/
+
+#############################
+#   SQL SERVER / DATABASE   #
+#############################
+
+*.bak
+*.trn
+*.mdf
+*.ldf
+*.ndf
+*.bacpac
+*.dacpac
+
+# Dumps
+*.sql.dmp
+*.dump
+*.backup
+
+#############################
+#         DOCKER            #
+#############################
+
+# Docker build artifacts
+docker-data/
+docker/volumes/
+*.tar
+*.img
+
+#############################
+#       TYPESCRIPT          #
+#############################
+
+*.tsbuildinfo
+*.tsbuildinfo.*
+dist/**/*.d.ts.map
+build/**/*.d.ts.map
+
+#############################
+#        MISC EXTRA         #
+#############################
+
 *.swp
 *.swo
-
-# ── sistema operativo
-.DS_Store
-Thumbs.db
-ehthumbs.db
-Icon?
-Desktop.ini
-
-# ── empaques/artefactos binarios
+*.orig
+*.iml
 *.tgz
 *.zip
 *.7z
 *.tar
 *.tar.gz
-
-# ── bases de datos/exports (sql server, etc.)
-*.bak
-*.bacpac
-*.dacpac
-*.mdf
-*.ldf
-
-# ── otros
-*.iml
-*.orig
+*.tmp
+*.temp
