@@ -1,0 +1,80 @@
+
+.acceso-main {
+  position: relative;
+  width: 170vh;
+  height: 80vh;        
+  min-height: 450px;
+}
+
+
+.acceso-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.acceso-card {
+  background-color: #ffffff;
+  border: 2px solid #f5c2c7;      
+  border-radius: 20px;            
+  padding: 6vh 6vw;               
+  width: 60vh;                   
+  max-width: 520px;              
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transition: 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .acceso-card {
+    width: 90vw;
+    padding: 5vh 5vw;
+  }
+}
+
+.acceso-icon {
+  width: 15vh;                   
+  height: 15vh;
+  max-width: 110px;               
+  max-height: 110px;
+  border-radius: 50%;
+  background-color: #f8d7da;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 4vh;
+}
+
+.acceso-icon span {
+  font-size: 7vh;                  
+  max-font-size: 55px;
+  color: #dc3545;
+}
+
+
+.acceso-title {
+  font-size: 3.5vh;              
+  max-font-size: 30px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 2vh;
+}
+
+
+.acceso-text {
+  font-size: 2.3vh;               
+  max-font-size: 18px;
+  color: #555;
+  line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+  .acceso-title {
+    font-size: 3vh;
+  }
+
+  .acceso-text {
+    font-size: 2.2vh;
+  }
+}

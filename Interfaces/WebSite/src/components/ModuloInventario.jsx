@@ -15,7 +15,21 @@ toastr.options = {
   preventDuplicates: true,
 };
 
+
+import { useAuth } from "../context/AuthContext"; 
+import SinAcceso from "./ui/sinAccesoCorp.jsx";
+
 export default function ModuloInventario() {
+
+  const { rol } = useAuth(); 
+
+  if (rol !== "Administrador") {
+    return (
+      <SinAcceso />
+    );
+  }
+
+
   const [filtros, setFiltros] = useState({ nombre: "", Grupo: "" });
   const [productos, setproductos] = useState([]);
   const [cargando, setCargando] = useState(false);

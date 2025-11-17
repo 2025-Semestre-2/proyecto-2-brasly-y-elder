@@ -1,7 +1,18 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; 
+import SinAcceso from "./ui/sinAccesoCorp.jsx";
 
 export default function ModuloVentas() {
+
+  const { rol } = useAuth(); 
+
+  if (rol !== "Administrador") {
+    return (
+      <SinAcceso />
+    );
+  }
+
   const [filtros, setFiltros] = useState({
     nombre: "",
     fechamin: "",
