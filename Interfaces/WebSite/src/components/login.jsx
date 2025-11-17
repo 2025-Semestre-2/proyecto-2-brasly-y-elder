@@ -25,15 +25,11 @@ export default function Login({ onLogin }) {
         setError(data.message || "Credenciales inválidas");
         return;
       }
-
-      // Guardar token y usuario
       localStorage.setItem("token", data.token);
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
       localStorage.setItem("sucursal", data.usuario.sucursal);
 
       console.log("Usuario:", data.usuario);
-
-      // Continuar a la app
       onLogin();
 
     } catch (err) {
