@@ -912,3 +912,79 @@ begin
     order by sucursal, monto_total desc;
 end;
 go
+
+use WideWorldImporters
+go 
+create or alter procedure dbo.ListarColores
+as
+begin
+    set nocount on;
+
+    select 
+        ColorID as id,
+        ColorName as nombre
+    from Warehouse.Colors
+    order by ColorName;
+end;
+go
+
+create or alter procedure dbo.ListarGruposProductos
+as
+begin
+    set nocount on;
+
+    select 
+        StockGroupID as id,
+        StockGroupName as nombre
+    from Warehouse.StockGroups
+    order by StockGroupName;
+end;
+go
+create or alter procedure dbo.ListarProveedores
+as
+begin
+    set nocount on;
+
+    select 
+        SupplierID as id,
+        SupplierName as nombre
+    from Purchasing.Suppliers
+    order by SupplierName;
+end;
+go
+create or alter procedure dbo.ListarCategoriasClientes
+as
+begin
+    set nocount on;
+
+    select 
+        CustomerCategoryID as id,
+        CustomerCategoryName as categoria
+    from Sales.CustomerCategories
+    order by CustomerCategoryName;
+end;
+go
+create or alter procedure dbo.ListarCategoriasProveedores
+as
+begin
+    set nocount on;
+
+    select 
+        SupplierCategoryID as id,
+        SupplierCategoryName as categoria
+    from Purchasing.SupplierCategories
+    order by SupplierCategoryName;
+end;
+go
+create or alter procedure dbo.GrupoInventario
+as
+begin
+    set nocount on;
+
+    select 
+        StockGroupID as id,
+        StockGroupName as grupo
+    from Warehouse.StockGroups
+    order by StockGroupName;
+end;
+go
