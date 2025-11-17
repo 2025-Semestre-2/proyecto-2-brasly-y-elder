@@ -329,13 +329,7 @@ a:hover {
 .card__desc{ margin:0; color: rgba(13,27,42,.65); }
 
 /* fila inferior de info (dos bloques) */
-.info-row {
-  margin-top: 26px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-@media (max-width: 860px){ .info-row{ grid-template-columns: 1fr; } }
+
 
 .info-card{
   display: grid; grid-template-columns: 1fr; align-items: center;
@@ -465,4 +459,47 @@ a:hover {
 
 .link:hover {
   text-decoration: underline;
+}
+
+
+/* Chips */
+.chip-sm, .chip-sm2 { font-size: 11px; padding: 4px 10px; }
+
+/* Hero */
+.hero-small { margin-bottom: 10px; }
+.small-title { font-size: 22px; }
+.small-sub { font-size: 12px; }
+
+/* Badges */
+.badges-sm .b-sm { font-size: 10px; padding: 2px 6px; }
+
+/* Section title */
+.title-sm { font-size: 17px; margin-bottom: 8px; }
+
+/* Cards */
+.card-sm {
+  padding: 12px;
+  border-radius: 12px;
+}
+.sm-icon { font-size: 22px; }
+.sm-card-title { font-size: 15px; margin-top: 4px; }
+.sm-desc { font-size: 12px; }
+
+.grid-tight { gap: 10px; }
+
+/* Footer */
+.foot-sm { font-size: 11px; margin-top: 10px; }
+/* GRID 4–2 */
+.grid-4-2 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 10px;
+}
+
+
+.grid-4-2 > article:nth-child(n+5) {
+  grid-column: span 2;
+  justify-self: center;
+  width: 60%;
 }
