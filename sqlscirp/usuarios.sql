@@ -92,12 +92,12 @@ go
 -- 5. INSERTS DE PRUEBA
 --------------------------------------------------------
 exec insertarusuario
-    @iduser = 119200156,
-    @username = 'admin1',
+    @iduser = 119200256,
+    @username = 'admi1',
     @password = 'admin123',
     @fullname = 'juan administrador',
-    @rol = 'administrador',
-    @email = 'admin1@empresa.com',
+    @rol = 'Corporativo',
+    @email = 'admin3@empresa.com',
     @sucursal = 'Corporativo',
     @active = 1;
 
@@ -116,7 +116,7 @@ exec insertarusuario
     @username = 'limon01',
     @password = 'limonpass',
     @fullname = 'mario limón',
-    @rol = 'corporativo',
+    @rol = 'administrador',
     @email = 'mario@empresa.com',
     @sucursal = 'Limón',
     @active = 1;
@@ -128,4 +128,29 @@ go
 exec validarusuario
     @email = 'admin1@empresa.com',
     @password = 'admin123';
+go
+
+
+
+
+exec insertarusuario
+    @iduser = 703080520,
+    @username = 'limon0',
+    @password = 'limonpass',
+    @fullname = 'elder',
+    @rol = 'administrador',
+    @email = 'elder@empresa.com',
+    @sucursal = 'Limón',
+    @active = 1;
+go
+
+exec insertarusuario
+    @iduser = 703080521,
+    @username = 'limon',
+    @password = 'limonpass',
+    @fullname = 'elderr',
+    @rol = 'administrador',
+    @email = 'brasly@empresa.com',
+    @sucursal =  'San José',
+    @active = 1;
 go
