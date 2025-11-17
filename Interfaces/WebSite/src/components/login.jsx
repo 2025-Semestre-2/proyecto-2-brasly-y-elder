@@ -12,16 +12,37 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     setError("");
 
-    if (email === "" || pass === "") {
+    if (email.trim() === "" || pass.trim() === "") {
       setError("Debes llenar todos los campos");
       return;
     }
-    const usuario = {
-      sucursal: "Limon",
-      rol: "Administrador"
-    };
-    login(usuario);
-    onLogin();
+
+    try {
+      const resp = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: pass })
+      });
+
+      if (!resp.ok) {
+        setError("Credenciales incorrectas");
+        return;
+      }
+
+      const user = await resp.json();
+
+      const usuarioFinal = {
+        rol: user.rol,
+        sucursal: user.sucursal
+      };
+
+      login(usuarioFinal); 
+      onLogin();             
+
+    } catch (err) {
+      setError("No se pudo conectar con el servidor");
+      console.error("Error login:", err);
+    }
   };
 
   return (
@@ -60,6 +81,7 @@ export default function Login({ onLogin }) {
           <button type="submit" className="btn-login">
             Entrar
           </button>
+
         </form>
 
       </div>

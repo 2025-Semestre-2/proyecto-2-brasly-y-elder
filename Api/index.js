@@ -1,3 +1,10 @@
+process.on("uncaughtException", (err) => {
+  console.error("❌ EXCEPCIÓN NO CAPTURADA:", err);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("❌ PROMESA NO MANEJADA:", reason);
+});
 
 const express = require("express");
 const sql = require("mssql");
@@ -304,7 +311,41 @@ app.get("/estadisticas/ventas_sucursal", async (req, res) => {
     res.status(500).json({ error: "Error en ventas por sucursal." });
   }
 });
+///==========================
 
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const r = pools.CORP.request();
+    r.input("email", sql.VarChar(100), email);
+    r.input("password", sql.VarChar(200), password);
+
+    const result = await r.execute("dbo.validarusuario");
+
+    if (result.recordset.length === 0) {
+      return res.status(401).json({ error: "Credenciales inválidas" });
+    }
+
+    const user = result.recordset[0];
+
+    res.json({
+      iduser: user.iduser,
+      username: user.username,
+      fullname: user.fullname,
+      rol: user.rol,
+      email: user.email,
+      sucursal: user.sucursal,
+      active: user.active,
+      hiredate: user.hiredate
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error en el login" });
+  }
+});
 
 // ======================================================================
 //  SERVIDOR
