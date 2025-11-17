@@ -1,47 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function AgregarProducto() {
+  const { sucursal } = useAuth(); // ← Sucursal del usuario
+
   const [proveedores, setProveedores] = useState([]);
   const [colores, setColores] = useState([]);
   const [paquetes, setPaquetes] = useState([]);
   const [grupos, setGrupos] = useState([]);
   const [cargando, setCargando] = useState(false);
+
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    StockItemName: "",
-    Brand: "",
-    Size: "",
-    Barcode: "",
-    ColorID: "",
-    SupplierID: "",
-    UnitPackageID: "",
-    OuterPackageID: "",
-    QuantityPerOuter: 1,
-    LeadTimeDays: 0,
-    TypicalWeightPerUnit: 0,
-    IsChillerStock: 0,
-    MarketingComments: "",
-    InternalComments: "",
-    UnitPrice: 0,
-    RecommendedRetailPrice: 0,
-    TaxRate: 0,
-    GrupoID: ""
+    stockitemname: "",
+    brand: "",
+    size: "",
+    barcode: "",
+    colorid: "",
+    supplierid: "",
+    unitpackageid: "",
+    outerpackageid: "",
+    quantityperouter: 1,
+    leadtimedays: 0,
+    typicalweightperunit: 0,
+    ischillerstock: 0,
+    marketingcomments: "",
+    internalcomments: "",
+    unitprice: 0,
+    recommendedretailprice: null,
+    taxrate: 0
   });
 
   const cargarListas = async () => {
     try {
-      const [prov, col, paq, gru] = await Promise.all([
-        fetch("http://localhost:3000/proveedores/lista").then(r => r.json()),
-        fetch("http://localhost:3000/colores/lista").then(r => r.json()),
-        fetch("http://localhost:3000/paquetes/lista").then(r => r.json()),
-        fetch("http://localhost:3000/grupos/lista").then(r => r.json()),
-      ]);
-      setProveedores(prov);
-      setColores(col);
-      setPaquetes(paq);
-      setGrupos(gru);
+      const urls = [
+        "/proveedores",
+        "/colores",
+        "/paquetes",
+        "/grupos"
+      ];
+
+      const [p, c, pa, g] = await Promise.all(
+        urls.map(u => fetch("http://localhost:3000" + u).then(r => r.json()))
+      );
+
+      setProveedores(p);
+      setColores(c);
+      setPaquetes(pa);
+      setGrupos(g);
+
     } catch (e) {
       console.error("Error cargando listas:", e);
     }
@@ -59,75 +68,72 @@ export default function AgregarProducto() {
 
   const resetForm = () => {
     setForm({
-      StockItemName: "",
-      Brand: "",
-      Size: "",
-      Barcode: "",
-      ColorID: "",
-      SupplierID: "",
-      UnitPackageID: "",
-      OuterPackageID: "",
-      QuantityPerOuter: 1,
-      LeadTimeDays: 0,
-      TypicalWeightPerUnit: 0,
-      IsChillerStock: 0,
-      MarketingComments: "",
-      InternalComments: "",
-      UnitPrice: 0,
-      RecommendedRetailPrice: 0,
-      TaxRate: 0,
-      GrupoID: ""
+      stockitemname: "",
+      brand: "",
+      size: "",
+      barcode: "",
+      colorid: "",
+      supplierid: "",
+      unitpackageid: "",
+      outerpackageid: "",
+      quantityperouter: 1,
+      leadtimedays: 0,
+      typicalweightperunit: 0,
+      ischillerstock: 0,
+      marketingcomments: "",
+      internalcomments: "",
+      unitprice: 0,
+      recommendedretailprice: null,
+      taxrate: 0
     });
   };
 
   const onSubmit = async (e) => {
-  e.preventDefault();
-  setCargando(true);
-  try {
-    const payload = {
-      ...form,
-      QuantityPerOuter: Number(form.QuantityPerOuter) || 1,
-      LeadTimeDays: Number(form.LeadTimeDays) || 0,
-      TypicalWeightPerUnit: Number(form.TypicalWeightPerUnit) || 0,
-      IsChillerStock: form.IsChillerStock ? 1 : 0,
-      UnitPrice: Number(form.UnitPrice) || 0,
-      RecommendedRetailPrice:
-        form.RecommendedRetailPrice === "" ? null : Number(form.RecommendedRetailPrice),
-      TaxRate: Number(form.TaxRate) || 0,
-      ColorID: form.ColorID === "" ? null : Number(form.ColorID),
-      SupplierID: Number(form.SupplierID),
-      UnitPackageID: Number(form.UnitPackageID),
-      OuterPackageID: Number(form.OuterPackageID),
-    };
+    e.preventDefault();
+    setCargando(true);
 
-    const resp = await fetch("http://localhost:3000/inventario/insertar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    const ct = resp.headers.get("content-type") || "";
-    let data;
-    if (ct.includes("application/json")) {
-      data = await resp.json();
-    } else {
-      const text = await resp.text();
-      try { data = JSON.parse(text); } catch { data = { error: text }; }
+    try {
+
+      const payload = {
+        ...form,
+        supplierid: Number(form.supplierid),
+        unitpackageid: Number(form.unitpackageid),
+        outerpackageid: Number(form.outerpackageid),
+        colorid: form.colorid ? Number(form.colorid) : null,
+        quantityperouter: Number(form.quantityperouter),
+        leadtimedays: Number(form.leadtimedays),
+        typicalweightperunit: Number(form.typicalweightperunit),
+        unitprice: Number(form.unitprice),
+        recommendedretailprice: form.recommendedretailprice ? Number(form.recommendedretailprice) : null,
+        taxrate: Number(form.taxrate),
+        ischillerstock: form.ischillerstock ? 1 : 0 ,
+        sucursal: sucursal  // ← MANDAR LA SUCURSAL
+      };
+
+      const resp = await fetch("http://localhost:3000/inventario/insertar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok) throw new Error(data.error || "Error al insertar");
+
+      alert("Producto insertado correctamente.");
+
+      resetForm();
+
+    } catch (err) {
+      alert(err.message);
+      console.error(err);
+
+    } finally {
+      setCargando(false);
     }
-    if (!resp.ok) {
-      throw new Error(data?.error || `Error ${resp.status}`);
-    }
+  };
 
-    alert(`Producto guardado. ID: ${data.StockItemID}`);
-    resetForm();
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  } finally {
-    setCargando(false);
-  }
-};
-
-  return (
+    return (
     <main className="content">
       <div className="Sup-contenedor">
         <form className="FormNuevoProducto" onSubmit={onSubmit}>
@@ -295,6 +301,7 @@ export default function AgregarProducto() {
           </div>
         </form>
       </div>
-    </main>
-  );
+    </main>
+  );
+
 }
